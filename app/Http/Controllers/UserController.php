@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Http\Validation\ValidatedData;
 
 class UserController extends AbstractController
@@ -12,8 +13,12 @@ class UserController extends AbstractController
         $this->render('/user/createUserView.php', ['check' => 'hi']);
     }
 
-    public function store(ValidatedData $data)
+    /**
+     * @param ValidatedData $data
+     * @return void
+     */
+    public function store(ValidatedData $validatedData): void
     {
-
+        $data = $validatedData->validated();
     }
 }

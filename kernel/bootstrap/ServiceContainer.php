@@ -4,52 +4,34 @@ namespace Kernel\bootstrap;
 
 use ReflectionClass;
 use ReflectionException;
-use RuntimeException;
 
 class ServiceContainer
 {
-    private array $services = [];
-
-    public function register(string $name, callable $resolver): void
-    {
-        $this->services[$name] = $resolver;
-    }
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public function get($name): mixed
-    {
-        if (isset($this->services[$name])) {
-            return $this->services[$name]();
-        }
-        throw new RuntimeException("Service '$name' not found in the container.");
-    }
+    private const CONSTRACT_METHOD_NAME = '__construct';
 
     /**
      * @throws ReflectionException
      */
-    public function call(string $className, string $methodName, array $additionalParameters = [])
+    public function call(string $className, string $methodName)
     {
         $reflectionClass = new ReflectionClass($className);
+
+        if ($methodName === self::CONSTRACT_METHOD_NAME && !$reflectionClass->hasMethod($methodName)) {
+            return $reflectionClass->newInstance();
+        }
+
         $method = $reflectionClass->getMethod($methodName);
+
         $parameters = [];
-        echo 'Check';
-        die();
-//        foreach ($method->getParameters() as $parameter) {
-//            $parameterName = $parameter->getName();
-//
-//            // Check if the parameter is provided in additional parameters
-//            if (array_key_exists($parameterName, $additionalParameters)) {
-//                $parameters[] = $additionalParameters[$parameterName];
-//            } else {
-//                // Resolve the dependency from the container
-//                $parameters[] = $this->get($parameter->getClass()->name);
-//            }
-//        }
-//
-//        $instance = $reflectionClass->newInstance();
-//        return $method->invokeArgs($instance, $parameters);
+
+        foreach ($method->getParameters() as $parameter) {
+            $parameterType = $parameter->getType()->getName();
+
+            $parameters[] = $this->call($parameterType, self::CONSTRACT_METHOD_NAME);
+        }
+
+        $instance = $reflectionClass->newInstance();
+
+        return $method->invokeArgs($instance, $parameters);
     }
 }

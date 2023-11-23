@@ -4,6 +4,7 @@ namespace Kernel\components;
 
 use Kernel\bootstrap\ServiceContainer;
 use Kernel\Enum\RequestMethod;
+use ReflectionException;
 
 class Route
 {
@@ -55,6 +56,9 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private static function basicRouteLogic($path, $closure): void
     {
         if (empty(static::$requestPath)) {
@@ -62,9 +66,7 @@ class Route
         }
 
         if ($path === self::$requestPath) {
-
-            //[$class, $method] = $closure;
-            //(new $class)->{$method}();
+            self::$container->call($closure[0], $closure[1]);
         }
     }
 
