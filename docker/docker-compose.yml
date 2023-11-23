@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf/site.conf:/etc/nginx/conf.d/site.conf
+      - ../:/var/www/code
+  php:
+    build:
+      context: ./php
+    container_name: php
+    volumes:
+      - ../:/var/www/code
+    ports:
+      - "9000:9000"
+  mysql:
+    build:
+      context: ./mysql
+      args:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    container_name: mysql
+    volumes:
+      - ./mysqldata:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT}:3306"
