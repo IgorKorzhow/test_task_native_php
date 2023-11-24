@@ -1,6 +1,6 @@
 <?php
 
-namespace Kernel\bootstrap;
+namespace Kernel\Bootstrap;
 
 use ReflectionClass;
 use ReflectionException;
@@ -31,6 +31,11 @@ class ServiceContainer
         }
 
         $instance = $reflectionClass->newInstance();
+
+        if ($methodName === self::CONSTRACT_METHOD_NAME) {
+            return $instance;
+
+        }
 
         return $method->invokeArgs($instance, $parameters);
     }

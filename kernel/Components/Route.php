@@ -1,8 +1,8 @@
 <?php
 
-namespace Kernel\components;
+namespace Kernel\Components;
 
-use Kernel\bootstrap\ServiceContainer;
+use Kernel\Bootstrap\ServiceContainer;
 use Kernel\Enum\RequestMethod;
 use ReflectionException;
 

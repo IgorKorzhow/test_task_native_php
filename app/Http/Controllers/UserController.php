@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Validation\ValidatedData;
+use App\Http\Validation\CreateUserRequest;
 
 class UserController extends AbstractController
 {
@@ -14,11 +13,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param ValidatedData $data
+     * @param CreateUserRequest $createUserRequest
      * @return void
      */
-    public function store(ValidatedData $validatedData): void
+    public function store(CreateUserRequest $createUserRequest): void
     {
-        $data = $validatedData->validated();
+        $validationResult = $createUserRequest->validated();
+
+        if (count($validationResult['errors']) > 0) {
+            $this->redirect('/users/register');
+        }
     }
 }

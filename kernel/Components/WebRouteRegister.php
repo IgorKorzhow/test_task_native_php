@@ -1,6 +1,6 @@
 <?php
 
-namespace Kernel\components;
+namespace Kernel\Components;
 
 class WebRouteRegister
 {

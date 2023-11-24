@@ -1,6 +1,6 @@
 <?php
 
-use Kernel\bootstrap\App;
+use Kernel\Bootstrap\App;
 
 require '../vendor/autoload.php';
 ini_set('error_reporting', true);
