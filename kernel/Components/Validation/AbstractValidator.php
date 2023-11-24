@@ -7,7 +7,7 @@ use Kernel\Components\Validation\Rules\AbstractValidationRule;
 abstract class AbstractValidator
 {
     protected array $errors = [];
-    protected array $data = [];
+    public array $data = [];
 
     public function validated(): array
     {

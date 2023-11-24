@@ -16,10 +16,6 @@ class ServiceContainer
     {
         $reflectionClass = new ReflectionClass($className);
 
-        if ($methodName === self::CONSTRACT_METHOD_NAME && !$reflectionClass->hasMethod($methodName)) {
-            return $reflectionClass->newInstance();
-        }
-
         $method = $reflectionClass->getMethod($methodName);
 
         $parameters = [];
@@ -27,16 +23,30 @@ class ServiceContainer
         foreach ($method->getParameters() as $parameter) {
             $parameterType = $parameter->getType()->getName();
 
-            $parameters[] = $this->call($parameterType, self::CONSTRACT_METHOD_NAME);
+            $parameters[] = $this->initializeClass(new ReflectionClass($parameterType));
         }
 
-        $instance = $reflectionClass->newInstance();
-
-        if ($methodName === self::CONSTRACT_METHOD_NAME) {
-            return $instance;
-
-        }
+        $instance = $this->initializeClass($reflectionClass);
 
         return $method->invokeArgs($instance, $parameters);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function initializeClass(ReflectionClass $reflectionClass) {
+        if (!$reflectionClass->hasMethod(self::CONSTRACT_METHOD_NAME)) {
+            return $reflectionClass->newInstance();
+        }
+
+        $parameters = [];
+
+        foreach ($reflectionClass->getConstructor()->getParameters() as $parameter) {
+            $parameterType = $parameter->getType()->getName();
+
+            $parameters[] = $this->initializeClass(new ReflectionClass($parameterType));
+        }
+
+        return $reflectionClass->newInstanceArgs($parameters);
     }
 }

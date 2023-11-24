@@ -1,6 +1,6 @@
 <?php
 
-namespace Kernel\Components;
+namespace Kernel\Components\Router;
 
 use Kernel\Bootstrap\ServiceContainer;
 use Kernel\Enum\RequestMethod;
@@ -11,6 +11,9 @@ class Route
     private static string $requestPath;
     public static ServiceContainer $container;
 
+    /**
+     * @throws ReflectionException
+     */
     public static function get(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::GET->value) {
@@ -20,6 +23,9 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function post(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::POST->value) {
@@ -29,6 +35,9 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function put(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::PUT->value) {
@@ -38,6 +47,9 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function patch(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::PATCH->value) {
@@ -47,6 +59,9 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function delete(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::DELETE->value) {
