@@ -30,15 +30,10 @@ class UserController extends AbstractController
     {
         $validationResult = $createUserRequest->validated();
 
-        if (count($validationResult['errors']) > 0) {
-            $_SESSION['data'] = $validationResult;
-            $this->redirect('/users/register');
-        }
-
-        $userRepository->store($validationResult['data']);
+        $userRepository->store($validationResult);
 
         /** @var User|null $user */
-        $user = $userRepository->getByEmail($validationResult['data']['email']);
+        $user = $userRepository->getByEmail($validationResult['email']);
 
         $_SESSION['user'] = $user;
 
@@ -50,16 +45,11 @@ class UserController extends AbstractController
         $this->render('/user/loginUserView.php', $_SESSION['data'] ?: []);
     }
 
-    public function login(LoginUserRequest $loginUserRequest, UserRepository $userRepository)
+    #[NoReturn] public function login(LoginUserRequest $loginUserRequest, UserRepository $userRepository): void
     {
         $validationResult = $loginUserRequest->validated();
 
-        if (count($validationResult['errors']) > 0) {
-            $_SESSION['data'] = $validationResult;
-            $this->redirect('/users/login');
-        }
-
-        $user = $userRepository->login($validationResult['data']);
+        $user = $userRepository->login($validationResult);
 
         if (!$user) {
             $_SESSION['data']['errors']['login_error'][0] = 'Problem with login or password';

@@ -20,10 +20,18 @@ abstract class AbstractValidator
             }
         }
 
-        return [
+        $result = [
             'data' => $this->data,
             'errors' => $this->errors
         ];
+
+        if (count($this->errors) > 0) {
+            $_SESSION['data'] = $result;
+            header('Location:' . $_SERVER['HTTP_REFERER']);
+            die();
+        }
+
+        return $result['data'];
     }
 
     abstract protected function rules();

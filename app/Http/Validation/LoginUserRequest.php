@@ -6,7 +6,6 @@ use Kernel\Components\Validation\AbstractValidator;
 use Kernel\Components\Validation\Rules\MaxLength;
 use Kernel\Components\Validation\Rules\Required;
 use Kernel\Components\Validation\Rules\StringRule;
-use Kernel\Components\Validation\Rules\Unique;
 
 final class LoginUserRequest extends AbstractValidator
 {
