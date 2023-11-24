@@ -2,7 +2,7 @@
 
 namespace Kernel\Bootstrap;
 use Kernel\Components\Route;
-use Kernel\Components\WebRouteRegister;
+use Kernel\Components\Router\WebRouteRegister;
 
 class App
 {
