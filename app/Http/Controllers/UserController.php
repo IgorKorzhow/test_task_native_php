@@ -35,9 +35,11 @@ class UserController extends AbstractController
         /** @var User|null $user */
         $user = $userRepository->getByEmail($validationResult['email']);
 
+        unset($_SESSION['data']);
+
         $_SESSION['user'] = $user;
 
-        $this->redirect('/users/show');
+        $this->redirect('/');
     }
 
     public function loginView(): void
@@ -56,9 +58,18 @@ class UserController extends AbstractController
             $this->redirect('/users/login');
         }
 
+        unset($_SESSION['data']);
+
         $_SESSION['user'] = $user;
 
-        $this->redirect('/users/show');
+        $this->redirect('/');
+    }
+
+    #[NoReturn] public function logout(): void
+    {
+        unset($_SESSION['user']);
+
+        $this->redirect('/');
     }
 
     public function showUserInfo(): void

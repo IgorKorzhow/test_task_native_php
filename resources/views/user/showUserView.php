@@ -24,4 +24,4 @@ $body = 'Check';
 //    </form>
 //HTML;
 
-require $_ENV['APP_PROJECT_PATH'] . '/resources/views/layouts/basicLayout.php';
+require $_ENV['APP_PROJECT_PATH'] . '/resources/views/layouts/appLayout.php';

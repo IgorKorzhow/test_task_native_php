@@ -9,7 +9,7 @@ class AuthMiddleware implements IMiddleware
     public function __invoke(): void
     {
         if (empty($_SESSION['user'])) {
-            header('Location: ' . $_ENV['APP_URL']. '/users/login');
+            header('Location: ' . $_ENV['APP_URL']. '/');
             die();
         }
     }

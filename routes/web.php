@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Middlewares\AuthMiddleware;
 use Kernel\Components\Router\Route;
+
+Route::get('/', [ProductController::class, 'index']);
 
 Route::get('/users/register', [UserController::class, 'registrationView']);
 
@@ -12,7 +15,8 @@ Route::get('/users/login', [UserController::class, 'loginView']);
 
 Route::post('/users/login', [UserController::class, 'login']);
 
-
 Route::middlewares([new AuthMiddleware()], static function () {
     Route::get('/users/show', [UserController::class, 'showUserInfo']);
+
+    Route::get('/users/logout', [UserController::class, 'logout']);
 });
