@@ -9,6 +9,8 @@ class Unique extends AbstractValidationRule
 {
     private ?string $table;
 
+    private ?string $id;
+
     /**
      * @throws RuntimeException
      */
@@ -34,6 +36,13 @@ class Unique extends AbstractValidationRule
         return $this;
     }
 
+    public function setExcept(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     private function checkExistence(string $field, string $value): bool
     {
         $dbConnection = DBConnection::getInstance();
@@ -44,11 +53,19 @@ class Unique extends AbstractValidationRule
             WHERE {$field} = :value
         SQL;
 
+        if (!empty($this->id)) {
+            $sql .= ' AND id <> :id';
+        }
+
+        $bindings = ['value' => $value];
+
+        if (!empty($this->id)) {
+            $bindings['id'] = $this->id;
+        }
+
         $preparedRequest = $dbConnection->prepare($sql);
 
-        $preparedRequest->execute([
-            'value' => $value,
-        ]);
+        $preparedRequest->execute($bindings);
 
         return (bool)$preparedRequest->fetch();
     }

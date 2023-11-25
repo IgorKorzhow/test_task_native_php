@@ -50,7 +50,7 @@ class Route
      */
     public static function put(string $path, array $closure): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::PUT->value) {
+        if (($_SERVER['REQUEST_METHOD'] !== RequestMethod::PUT->value)) {
             return;
         }
 

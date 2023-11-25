@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Validation\ChangePasswordRequest;
 use App\Http\Validation\CreateUserRequest;
 use App\Http\Validation\LoginUserRequest;
+use App\Http\Validation\UpdateUserRequest;
 use App\Models\User;
 use App\Repository\UserRepository;
 use JetBrains\PhpStorm\NoReturn;
@@ -74,8 +76,45 @@ class UserController extends AbstractController
 
     public function showUserInfo(): void
     {
+        $this->render('/user/updateUserView.php', $_SESSION['data'] ?: []);
+    }
+
+    #[NoReturn] public function updateUser(UpdateUserRequest $updateUserRequest, UserRepository $userRepository): void
+    {
+        $validationResult = $updateUserRequest->validated();
+
+        $userRepository->updateWithoutPassword($validationResult, $_SESSION['user']->id);
+
+        $_SESSION['user'] = $userRepository->getById($_SESSION['user']->id);
+
+        unset($_SESSION['data']);
+
+        $this->redirect('/users/show');
+    }
+
+    public function showChangePasswordForm(): void
+    {
+        $this->render('/user/changePasswordView.php', $_SESSION['data'] ?: []);
+    }
+
+    #[NoReturn] public function changePassword(ChangePasswordRequest $changePasswordRequest, UserRepository $userRepository): void
+    {
+        $validationResult = $changePasswordRequest->validated();
+
+        /** @var User $user */
         $user = $_SESSION['user'];
 
-        $this->render('/user/showUserView.php', ['user' => $user]);
+        if (!password_verify($validationResult['old_password'], $user->password)) {
+            $_SESSION['data']['errors']['password_error'][0] = 'Problem with old password';
+            $this->redirect('/users/changePassword');
+        }
+
+        $userRepository->updatePassword($validationResult, $_SESSION['user']->id);
+
+        $_SESSION['user'] = $userRepository->getById($_SESSION['user']->id);
+
+        unset($_SESSION['data']);
+
+        $this->redirect('/users/show');
     }
 }

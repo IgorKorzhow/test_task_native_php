@@ -52,7 +52,7 @@ class UserRepository
             : null;
     }
 
-    public function login(array $data)
+    public function login(array $data): ?User
     {
         $sql = <<<SQL
             SELECT *
@@ -73,5 +73,57 @@ class UserRepository
         return $user && password_verify($data['password'], $user['password'])
             ? (new User())->initializeModel($user)
             : null;
+    }
+
+    public function updateWithoutPassword(array $data, string $id): bool
+    {
+        $sql = <<<SQL
+            UPDATE users 
+            SET name = :name, email = :email, phone = :phone
+            WHERE id = :id
+        SQL;
+
+        return $this->dbConnection->prepare($sql)->execute([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'id' => $id,
+        ]);
+    }
+
+    public function getById(string $id): ?User
+    {
+        $sql = <<<SQL
+            SELECT *
+            FROM users
+            WHERE id = :id
+        SQL;
+
+        $preparedRequest = $this->dbConnection->prepare($sql);
+
+
+        $preparedRequest->execute([
+            'id' => $id
+        ]);
+
+        $user = $preparedRequest->fetch();
+
+        return $user
+            ? (new User())->initializeModel($user)
+            : null;
+    }
+
+    public function updatePassword(array $data, string $id): bool
+    {
+        $sql = <<<SQL
+            UPDATE users 
+            SET password = :password
+            WHERE id = :id
+        SQL;
+
+        return $this->dbConnection->prepare($sql)->execute([
+            'password' => password_hash($data['new_password'], PASSWORD_DEFAULT),
+            'id' => $id
+        ]);
     }
 }

@@ -18,5 +18,11 @@ Route::post('/users/login', [UserController::class, 'login']);
 Route::middlewares([new AuthMiddleware()], static function () {
     Route::get('/users/show', [UserController::class, 'showUserInfo']);
 
+    Route::get('/users/changePassword', [UserController::class, 'showChangePasswordForm']);
+
+    Route::patch('/users/changePassword', [UserController::class, 'changePassword']);
+
     Route::get('/users/logout', [UserController::class, 'logout']);
+
+    Route::patch('/users/update', [UserController::class, 'updateUser']);
 });

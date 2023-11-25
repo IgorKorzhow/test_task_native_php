@@ -11,7 +11,7 @@
     </div>
     <div>
         <?php if ($_SESSION['user']) {?>
-        <a class="link" href="">User Info</a>
+        <a class="link" href="/users/show">User Info</a>
         <a class="link" href="/users/logout">Logout</a>
         <?php } else { ?>
         <a class="link" href="/users/register">Registration</a>

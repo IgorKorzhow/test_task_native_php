@@ -28,6 +28,17 @@ body {
     color: #ffffff;
 }
 
+.link-black {
+    text-decoration: none;
+    color: #343434;
+    padding: 2px;
+    transition: 0.2s linear color;
+}
+
+.link-black:hover {
+    color: #0c0c0c;
+}
+
 .main-content {
     display: flex;
     justify-content: center;

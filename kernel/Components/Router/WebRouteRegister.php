@@ -3,6 +3,7 @@
 namespace Kernel\Components\Router;
 
 use App\Http\Middlewares\SessionStartMiddleware;
+use App\Http\Middlewares\SetCorrectRequestMethodMiddleware;
 
 class WebRouteRegister implements IRouteRegister
 {
@@ -15,6 +16,7 @@ class WebRouteRegister implements IRouteRegister
     public function getMiddlewares(): array
     {
         return [
+            new SetCorrectRequestMethodMiddleware(),
             new SessionStartMiddleware(),
         ];
     }
