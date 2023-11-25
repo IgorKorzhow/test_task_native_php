@@ -16,4 +16,10 @@ abstract class AbstractController
         header('Location: ' . $_ENV['APP_URL'] . $path, true, $statusCode);
         die();
     }
+
+    #[NoReturn] public function redirectBack(): void
+    {
+        header('Location:' . $_SERVER['HTTP_REFERER']);
+        die();
+    }
 }

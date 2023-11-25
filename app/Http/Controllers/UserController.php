@@ -8,6 +8,7 @@ use App\Http\Validation\LoginUserRequest;
 use App\Http\Validation\UpdateUserRequest;
 use App\Models\User;
 use App\Repository\UserRepository;
+use App\Services\YandexCaptchaService;
 use JetBrains\PhpStorm\NoReturn;
 use Kernel\Components\Controller\AbstractController;
 
@@ -25,17 +26,22 @@ class UserController extends AbstractController
 
     /**
      * @param CreateUserRequest $createUserRequest
-     * @param UserRepository $userRepository
      * @return void
      */
-    #[NoReturn] public function registration(CreateUserRequest $createUserRequest, UserRepository $userRepository): void
+    #[NoReturn] public function registration(CreateUserRequest $createUserRequest, YandexCaptchaService $captchaService): void
     {
         $validationResult = $createUserRequest->validated();
 
-        $userRepository->store($validationResult);
+        if (!$captchaService->checkCaptcha($validationResult['smart-token'])) {
+            $_SESSION['data']['data'] = $validationResult;
+            $_SESSION['data']['errors']['captcha'][0] = 'Problem with captcha';
+            $this->redirectBack();
+        }
+
+        $this->userRepository->store($validationResult);
 
         /** @var User|null $user */
-        $user = $userRepository->getByEmail($validationResult['email']);
+        $user = $this->userRepository->getByEmail($validationResult['email']);
 
         unset($_SESSION['data']);
 
@@ -49,11 +55,11 @@ class UserController extends AbstractController
         $this->render('/user/loginUserView.php', $_SESSION['data'] ?: []);
     }
 
-    #[NoReturn] public function login(LoginUserRequest $loginUserRequest, UserRepository $userRepository): void
+    #[NoReturn] public function login(LoginUserRequest $loginUserRequest): void
     {
         $validationResult = $loginUserRequest->validated();
 
-        $user = $userRepository->login($validationResult);
+        $user = $this->userRepository->login($validationResult);
 
         if (!$user) {
             $_SESSION['data']['errors']['login_error'][0] = 'Problem with login or password';
@@ -79,13 +85,13 @@ class UserController extends AbstractController
         $this->render('/user/updateUserView.php', $_SESSION['data'] ?: []);
     }
 
-    #[NoReturn] public function updateUser(UpdateUserRequest $updateUserRequest, UserRepository $userRepository): void
+    #[NoReturn] public function updateUser(UpdateUserRequest $updateUserRequest): void
     {
         $validationResult = $updateUserRequest->validated();
 
-        $userRepository->updateWithoutPassword($validationResult, $_SESSION['user']->id);
+        $this->userRepository->updateWithoutPassword($validationResult, $_SESSION['user']->id);
 
-        $_SESSION['user'] = $userRepository->getById($_SESSION['user']->id);
+        $_SESSION['user'] = $this->userRepository->getById($_SESSION['user']->id);
 
         unset($_SESSION['data']);
 
@@ -97,7 +103,7 @@ class UserController extends AbstractController
         $this->render('/user/changePasswordView.php', $_SESSION['data'] ?: []);
     }
 
-    #[NoReturn] public function changePassword(ChangePasswordRequest $changePasswordRequest, UserRepository $userRepository): void
+    #[NoReturn] public function changePassword(ChangePasswordRequest $changePasswordRequest): void
     {
         $validationResult = $changePasswordRequest->validated();
 
@@ -109,9 +115,9 @@ class UserController extends AbstractController
             $this->redirect('/users/changePassword');
         }
 
-        $userRepository->updatePassword($validationResult, $_SESSION['user']->id);
+        $this->userRepository->updatePassword($validationResult, $_SESSION['user']->id);
 
-        $_SESSION['user'] = $userRepository->getById($_SESSION['user']->id);
+        $_SESSION['user'] = $this->userRepository->getById($_SESSION['user']->id);
 
         unset($_SESSION['data']);
 
