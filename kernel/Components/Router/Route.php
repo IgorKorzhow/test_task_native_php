@@ -11,6 +11,16 @@ class Route
     private static string $requestPath;
     public static ServiceContainer $container;
 
+
+    public static function middlewares(array $middlewares, callable $closure): void
+    {
+        foreach ($middlewares as $middleware) {
+            $middleware();
+        }
+
+        $closure();
+    }
+
     /**
      * @throws ReflectionException
      */

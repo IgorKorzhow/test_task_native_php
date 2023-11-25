@@ -71,7 +71,7 @@ class UserRepository
         $user = $preparedRequest->fetch();
 
         return $user && password_verify($data['password'], $user['password'])
-            ? (new User())->initializeModel($data)
+            ? (new User())->initializeModel($user)
             : null;
     }
 }

@@ -61,7 +61,10 @@ class UserController extends AbstractController
         $this->redirect('/users/show');
     }
 
-    public function showUserInfo() {
-        $this->render('/users/show',$_SESSION['data'] ?: []);
+    public function showUserInfo(): void
+    {
+        $user = $_SESSION['user'];
+
+        $this->render('/user/showUserView.php', ['user' => $user]);
     }
 }
