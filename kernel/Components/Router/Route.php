@@ -1,8 +1,8 @@
 <?php
 
-namespace Kernel\components;
+namespace Kernel\Components\Router;
 
-use Kernel\bootstrap\ServiceContainer;
+use Kernel\Bootstrap\ServiceContainer;
 use Kernel\Enum\RequestMethod;
 use ReflectionException;
 
@@ -11,6 +11,19 @@ class Route
     private static string $requestPath;
     public static ServiceContainer $container;
 
+
+    public static function middlewares(array $middlewares, callable $closure): void
+    {
+        foreach ($middlewares as $middleware) {
+            $middleware();
+        }
+
+        $closure();
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     public static function get(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::GET->value) {
@@ -20,6 +33,9 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function post(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::POST->value) {
@@ -29,15 +45,21 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function put(string $path, array $closure): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::PUT->value) {
+        if (($_SERVER['REQUEST_METHOD'] !== RequestMethod::PUT->value)) {
             return;
         }
 
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function patch(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::PATCH->value) {
@@ -47,6 +69,9 @@ class Route
         self::basicRouteLogic($path, $closure);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function delete(string $path, array $closure): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== RequestMethod::DELETE->value) {
@@ -67,6 +92,8 @@ class Route
 
         if ($path === self::$requestPath) {
             self::$container->call($closure[0], $closure[1]);
+
+            die();
         }
     }
 
@@ -78,5 +105,10 @@ class Route
     public static function setContainer(ServiceContainer $container): void
     {
         static::$container = $container;
+    }
+
+    public static function default(callable $closure): void
+    {
+        $closure();
     }
 }

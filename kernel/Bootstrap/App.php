@@ -1,8 +1,8 @@
 <?php
 
-namespace Kernel\bootstrap;
-use Kernel\components\Route;
-use Kernel\components\WebRouteRegister;
+namespace Kernel\Bootstrap;
+use Kernel\Components\Router\Route;
+use Kernel\Components\Router\WebRouteRegister;
 
 class App
 {
