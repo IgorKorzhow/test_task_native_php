@@ -26,7 +26,9 @@ class UserController extends AbstractController
 
     /**
      * @param CreateUserRequest $createUserRequest
+     * @param YandexCaptchaService $captchaService
      * @return void
+     * @throws \JsonException
      */
     #[NoReturn] public function registration(CreateUserRequest $createUserRequest, YandexCaptchaService $captchaService): void
     {
@@ -55,9 +57,15 @@ class UserController extends AbstractController
         $this->render('/user/loginUserView.php', $_SESSION['data'] ?: []);
     }
 
-    #[NoReturn] public function login(LoginUserRequest $loginUserRequest): void
+    #[NoReturn] public function login(LoginUserRequest $loginUserRequest, YandexCaptchaService $captchaService): void
     {
         $validationResult = $loginUserRequest->validated();
+
+        if (!$captchaService->checkCaptcha($validationResult['smart-token'])) {
+            $_SESSION['data']['data'] = $validationResult;
+            $_SESSION['data']['errors']['captcha'][0] = 'Problem with captcha';
+            $this->redirectBack();
+        }
 
         $user = $this->userRepository->login($validationResult);
 

@@ -26,3 +26,7 @@ Route::middlewares([new AuthMiddleware()], static function () {
 
     Route::patch('/users/update', [UserController::class, 'updateUser']);
 });
+
+Route::default(static function () {
+    require $_ENV['APP_PROJECT_PATH'] . '/resources/views/404View.php';
+});

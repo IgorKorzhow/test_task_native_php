@@ -92,6 +92,8 @@ class Route
 
         if ($path === self::$requestPath) {
             self::$container->call($closure[0], $closure[1]);
+
+            die();
         }
     }
 
@@ -103,5 +105,10 @@ class Route
     public static function setContainer(ServiceContainer $container): void
     {
         static::$container = $container;
+    }
+
+    public static function default(callable $closure): void
+    {
+        $closure();
     }
 }

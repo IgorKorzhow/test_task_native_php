@@ -1,7 +1,7 @@
 <?php
 /** @var array $data */
 
-$header = 'Register user';
+$header = 'Login user';
 
 $body = <<<HTML
     <div class="form-container">
@@ -19,9 +19,16 @@ $body = <<<HTML
                 <br>
                 <span style="color: red;">{$data['errors']['password'][0]}</span>
             </div>
+            <div id="captcha-container" class="smart-captcha" data-sitekey="">
+            </div>
+            <div>
+                <span style="color: red;">{$data['errors']['captcha'][0]}</span>            
+            </div>
+            <input type="hidden" name="smart-token" value="">
             <button type="submit">Login user</button>
         </form>
     </div>
+    <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
 HTML;
 
 require $_ENV['APP_PROJECT_PATH'] . '/resources/views/layouts/appLayout.php';

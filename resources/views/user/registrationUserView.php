@@ -3,8 +3,6 @@
 
 $header = 'Register user';
 
-var_dump($data);
-
 $body = <<<HTML
     <div class="form-container" style="margin-top: 30px">
         <form class="form" method="post" action="/users/register">
@@ -41,7 +39,10 @@ $body = <<<HTML
             </div>
             <div id="captcha-container" class="smart-captcha" data-sitekey="">
             </div>
-            <input type="hidden" name="smart-token" value="<токен>">
+            <div>
+                <span style="color: red;">{$data['errors']['captcha'][0]}</span>            
+            </div>
+            <input type="hidden" name="smart-token" value="">
             <button type="submit">Register user</button>
         </form>
     </div>

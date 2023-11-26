@@ -1,7 +1,7 @@
 <?php
 /** @var array $data */
 
-$header = 'Register user';
+$header = 'Change password';
 
 $body = <<<HTML
     <div class="form-container">
